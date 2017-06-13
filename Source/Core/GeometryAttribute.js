@@ -1,9 +1,11 @@
 /*global define*/
 define([
+        './Check',
         './defaultValue',
         './defined',
         './DeveloperError'
     ], function(
+        Check,
         defaultValue,
         defined,
         DeveloperError) {
@@ -41,25 +43,21 @@ define([
      *   },
      *   primitiveType : Cesium.PrimitiveType.LINE_LOOP
      * });
-     * 
+     *
      * @see Geometry
      */
     function GeometryAttribute(options) {
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
         //>>includeStart('debug', pragmas.debug);
-        if (!defined(options.componentDatatype)) {
-            throw new DeveloperError('options.componentDatatype is required.');
-        }
-        if (!defined(options.componentsPerAttribute)) {
-            throw new DeveloperError('options.componentsPerAttribute is required.');
-        }
+
+        Check.typeOf.object('options.componentDatatype', options.componentDatatype);
+        Check.typeOf.number('options.componentsPerAttribute', options.componentsPerAttribute);
+
         if (options.componentsPerAttribute < 1 || options.componentsPerAttribute > 4) {
             throw new DeveloperError('options.componentsPerAttribute must be between 1 and 4.');
         }
-        if (!defined(options.values)) {
-            throw new DeveloperError('options.values is required.');
-        }
+        Check.defined('options.values', options.values);
         //>>includeEnd('debug');
 
         /**
