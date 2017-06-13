@@ -53,7 +53,6 @@ define([
 
         Check.typeOf.object('options.componentDatatype', options.componentDatatype);
         Check.typeOf.number('options.componentsPerAttribute', options.componentsPerAttribute);
-
         if (options.componentsPerAttribute < 1 || options.componentsPerAttribute > 4) {
             throw new DeveloperError('options.componentsPerAttribute must be between 1 and 4.');
         }
