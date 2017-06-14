@@ -9,6 +9,7 @@ define([
         '../Core/DeveloperError',
         '../Core/Matrix4',
         '../Core/writeTextToCanvas',
+        '../ThirdParty/Rtl',
         './BillboardCollection',
         './BlendOption',
         './HorizontalOrigin',
@@ -26,6 +27,7 @@ define([
         DeveloperError,
         Matrix4,
         writeTextToCanvas,
+        Rtl,
         BillboardCollection,
         BlendOption,
         HorizontalOrigin,
@@ -95,7 +97,6 @@ define([
 
         writeTextToCanvasParameters.fill = style === LabelStyle.FILL || style === LabelStyle.FILL_AND_OUTLINE;
         writeTextToCanvasParameters.stroke = style === LabelStyle.OUTLINE || style === LabelStyle.FILL_AND_OUTLINE;
-
         return writeTextToCanvas(character, writeTextToCanvasParameters);
     }
 
@@ -119,6 +120,7 @@ define([
     }
 
     function rebindAllGlyphs(labelCollection, label) {
+        ArabicShaping a = new ArabicShaping(ArabicShaping.LATTERS_SHAPE);
         var text = label._text;
         var textLength = text.length;
         var glyphs = label._glyphs;
