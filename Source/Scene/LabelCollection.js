@@ -9,7 +9,7 @@ define([
         '../Core/DeveloperError',
         '../Core/Matrix4',
         '../Core/writeTextToCanvas',
-        '../ThirdParty/Rtl',
+        '../ThirdParty/mapbox-gl-rtl-text',
         './BillboardCollection',
         './BlendOption',
         './HorizontalOrigin',
@@ -27,7 +27,7 @@ define([
         DeveloperError,
         Matrix4,
         writeTextToCanvas,
-        Rtl,
+        mapbox,
         BillboardCollection,
         BlendOption,
         HorizontalOrigin,
@@ -120,7 +120,6 @@ define([
     }
 
     function rebindAllGlyphs(labelCollection, label) {
-        ArabicShaping a = new ArabicShaping(ArabicShaping.LATTERS_SHAPE);
         var text = label._text;
         var textLength = text.length;
         var glyphs = label._glyphs;

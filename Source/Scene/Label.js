@@ -1,4 +1,4 @@
-/*global define*/
+ /*global define*/
 define([
         '../Core/BoundingRectangle',
         '../Core/Cartesian2',
@@ -10,6 +10,7 @@ define([
         '../Core/DeveloperError',
         '../Core/DistanceDisplayCondition',
         '../Core/NearFarScalar',
+        '../ThirdParty/mapbox-gl-rtl-text',
         './Billboard',
         './HeightReference',
         './HorizontalOrigin',
@@ -26,6 +27,7 @@ define([
         DeveloperError,
         DistanceDisplayCondition,
         NearFarScalar,
+        Mapbox,
         Billboard,
         HeightReference,
         HorizontalOrigin,
@@ -258,7 +260,11 @@ define([
                 //>>includeEnd('debug');
 
                 if (this._text !== value) {
-                    this._text = value;
+                    if(isArabic(value)){
+                        this._text = shaping(value);
+                    }else{
+                        this._text = value;
+                    }
                     rebindAllGlyphs(this);
                 }
             }
@@ -1178,6 +1184,71 @@ define([
     Label.prototype.isDestroyed = function() {
         return false;
     };
+
+    /**
+     * Returns true if this text is in Arabic; otherwise, false.
+     * @param {String} text
+     */
+    function isArabic(text){
+        for(var i = 0 ; i < text.length; i++){
+            var c = text.charCodeAt(i);
+            if(c >= 0x0600 && c <= 0x06FF){
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Returns true if the letter is in Latin; otherwise, false.
+     * @param {String} text
+     */
+    function isLetter(text){
+        return text.toLowerCase() != text.toUpperCase();
+    }
+    /**
+     * Returns the latin and arabic parts in an array.
+     * @param {String} text
+     */
+    function findArabicAndNonArabicParts(text){
+        var indices = {};
+        var index;
+        for(var i = 0 ; i < text.length; i++){
+            var c = text.charAt(i) + "";
+            if(i - 1 >= 0 && isPreviousSameType(text, i) && c != " "){
+                indices[index] += c;
+            }else{
+                indices[i] = c;
+                index = i;
+            }
+        }
+        return indices;
+    }
+    /**
+    * Returns true if the previous and both the current character is Arabic or non-Arabic.
+    * @param {String} text
+    * @param {Number} index
+    */
+   function isPreviousSameType(text, index){
+       return (( !isLetter(text.charAt(index - 1) + "") && !isLetter(text.charAt(index) + " " ) || ( isLetter(text.charAt(index - 1) + "" ) && isLetter(text.charAt(index) + " "))));
+   }
+
+    /**
+    * Returns a string that is created by directly adding non-Arabic parts and applying
+    * Arabic shaping and then aadding for the Arabic ones
+    * @param {String} text
+    */
+   function shaping(text){
+       var indices = findArabicAndNonArabicParts(text);
+       var newText = "";
+       for(var i in indices){
+           if(isArabic(indices[i])){
+               newText += applyArabicShaping(indices[i]);
+           }else{
+               newText += indices[i];
+           }
+       }
+       return newText;
+   }
 
     return Label;
 });
